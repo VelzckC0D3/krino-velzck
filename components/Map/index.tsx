@@ -1,39 +1,28 @@
-import 'mapbox-gl/dist/mapbox-gl.css';
-import { Box } from '@mantine/core';
 import React from 'react';
-import Mapbox, { Marker, NavigationControl } from 'react-map-gl';
-import mapboxgl from 'mapbox-gl';
-import classes from './Map.module.css';
-import { useMap } from '@/context/Map';
-import { useMediaQuery } from '@mantine/hooks';
-import { cssHalfMainSize, cssMainSize } from '@/theme';
+import { Box } from '@mantine/core';
+import { useCar } from '@/context/Cars'; // Import your useCar hook
+import classes from './CarList.module.css'; // Use or create a CSS module for styling
 
-function Map() {
-  const sm = useMediaQuery('(max-width: 48em)');
-  const { center, markers, setCenter } = useMap();
+function CarList() {
+  const { cars } = useCar();
 
   return (
     <Box className={classes.box}>
-      <Mapbox
-        {...center}
-        onMove={(evt) => setCenter(evt.viewState)}
-        mapboxAccessToken={process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN}
-        mapStyle="mapbox://styles/mapbox/streets-v11"
-        style={{ width: '100%', height: sm ? cssHalfMainSize : cssMainSize }}
-        reuseMaps
-      >
-        <NavigationControl />
-        {markers?.map((marker, index) => (
-          <Marker
-            key={index}
-            latitude={marker.location.lat}
-            longitude={marker.location.lng}
-            popup={new mapboxgl.Popup().setHTML(`<h2>${marker.label}</h2>`)}
-          />
-        ))}
-      </Mapbox>
+      {cars.map((car, index) => (
+        <div key={index} className={classes.carItem}>
+          <h2>{car.model}</h2>
+          <p>Description: {car.description}</p>
+          <p>Year: {car.year}</p>
+          <p>Price: ${car.price}</p>
+          <p>Color: {car.color}</p>
+          {/* Display car images if available */}
+          {car.images && car.images.map((image, imgIndex) => (
+            <img key={imgIndex} src={image} alt={`${car.model} image`} className={classes.carImage} />
+          ))}
+        </div>
+      ))}
     </Box>
   );
 }
 
-export default Map;
+export default CarList;

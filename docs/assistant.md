@@ -26,56 +26,45 @@ Remember, your aim is to make trip planning interactive, informative, and enjoya
 
 ## Functions
 
-### update_map
+### update_car
 
 ```json
 {
-  "name": "update_map",
-  "description": "Update map to center on a particular location",
+  "name": "update_car",
+  "description": "Display a list of cars to the user. Upon selection, return details of the chosen car.",
   "parameters": {
     "type": "object",
     "properties": {
-      "longitude": {
-        "type": "number",
-        "description": "Longitude of the location to center the map on"
-      },
-      "latitude": {
-        "type": "number",
-        "description": "Latitude of the location to center the map on"
-      },
-      "zoom": {
-        "type": "integer",
-        "description": "Zoom level of the map"
-      }
-    },
-    "required": ["longitude", "latitude", "zoom"]
-  }
-}
-```
-
-### add_marker
-
-```json
-{
-  "name": "add_marker",
-  "description": "Add marker to the map",
-  "parameters": {
-    "type": "object",
-    "properties": {
-      "longitude": {
-        "type": "number",
-        "description": "Longitude of the location to the marker"
-      },
-      "latitude": {
-        "type": "number",
-        "description": "Latitude of the location to the marker"
-      },
-      "label": {
+      "model": {
         "type": "string",
-        "description": "Text to display on the marker"
+        "description": "Model of the car"
+      },
+      "description": {
+        "type": "string",
+        "description": "Description of the car"
+      },
+      "year": {
+        "type": "number",
+        "description": "Year of manufacture of the car"
+      },
+      "price": {
+        "type": "number",
+        "description": "Rental or purchase price of the car"
+      },
+      "color": {
+        "type": "string",
+        "description": "Color of the car"
+      },
+      "images": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "URLs to images of the car"
       }
     },
-    "required": ["longitude", "latitude", "label"]
+    "required": ["model", "description", "year", "price", "color", "images"]
   }
 }
+
 ```

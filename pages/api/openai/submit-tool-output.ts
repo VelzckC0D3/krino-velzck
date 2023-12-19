@@ -1,36 +1,25 @@
-import { NextApiRequest, NextApiResponse } from 'next';
 import OpenAI from 'openai';
 
 const openai = new OpenAI();
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<OpenAI.Beta.Threads.Run | { error: string }>
-) {
+export default async function handler(req, res) {
   try {
     const { threadID, runID, toolOutputs } = req.body;
 
-    if (!threadID) {
-      return res.status(400).json({ error: 'Thread ID is required' }); // Use return here
+    if (!threadID || !runID || !toolOutputs) {
+      return res.status(400).json({ error: 'Thread ID, Run ID, and Tool outputs are required' });
     }
 
-    if (!runID) {
-      return res.status(400).json({ error: 'Run ID is required' }); // Use return here
-    }
+    // Submit tool outputs
+    await openai.beta.threads.runs.submitToolOutputs(threadID, runID, { tool_outputs: toolOutputs });
 
-    if (!toolOutputs) {
-      return res.status(400).json({ error: 'Tool outputs are required' }); // Use return here
-    }
-
-    const run = await openai.beta.threads.runs.submitToolOutputs(threadID, runID, {
-      tool_outputs: toolOutputs,
-    });
-
+    // Optionally, fetch the updated run status
+    const updatedRun = await openai.beta.threads.runs.retrieve(threadID, runID);
+    
     res.setHeader('Content-Type', 'application/json');
-    return res.status(200).json(run);
+    res.status(200).json(updatedRun);
   } catch (error) {
     console.error('The API encountered an error:', error);
-
-    return res.status(500).json({ error: 'Internal Server Error' });
+    res.status(500).json({ error: 'Internal Server Error' });
   }
 }

@@ -45,7 +45,7 @@ export default function MessageInput({ isRunning, sendMessageAndRun, resetThread
           style={{ flexGrow: 1 }}
           size="xl"
           radius="xl"
-          placeholder="Start typing..."
+          placeholder="Describe tu vehiculo..."
           {...form.getInputProps('message')}
           disabled={isRunning}
         />

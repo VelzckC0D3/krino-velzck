@@ -1,31 +1,69 @@
-import { Message } from '@/types/openai';
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useEffect, useRef } from 'react';
 import useSWR from 'swr';
+import { Message } from '@/types/openai';
 import { useThread } from './useThread';
-import { useMap } from '@/context/Map';
+import { useCar } from '@/context/Cars';
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 const useAssistant = () => {
+  console.log('Initializing useAssistant hook');
   const [isRunning, setIsRunning] = useState(false);
-  const { setCenter, addMarkers } = useMap();
+  const { addCar } = useCar();
   const { threadID, resetThread } = useThread();
   const { data: messages, mutate } = useSWR<Message[]>(
     threadID ? `/api/openai/get-responses?threadID=${threadID}` : null,
     fetcher,
-    {
-      refreshInterval: 1000,
-    }
+    { refreshInterval: 1000 }
   );
+
+  const messageQueue = useRef([]);
+
+  const processMessageQueue = useCallback(() => {
+    if (messageQueue.current.length > 0 && !isRunning) {
+      const nextMessage = messageQueue.current.shift();
+      sendMessageAndRun(nextMessage.content, nextMessage.files);
+    }
+  }, [isRunning]);
+
+  useEffect(() => {
+    processMessageQueue();
+  }, [isRunning, processMessageQueue]);
+
+  const checkRunStatus = async (runID) => {
+    let runRes = await fetch(`/api/openai/get-run?threadID=${threadID}&runID=${runID}`).then(
+      (res) => res.json()
+    );
+    while (runRes.status === 'queued' || runRes.status === 'in_progress') {
+      console.log('Waiting for run to complete');
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      runRes = await fetch(`/api/openai/get-run?threadID=${threadID}&runID=${runID}`).then((res) =>
+        res.json()
+      );
+    }
+    return runRes;
+  };
 
   const sendMessageAndRun = useCallback(
     async (content: string, files: any[] = []) => {
-      if (isRunning || !threadID) return;
+      console.log('sendMessageAndRun called', { content, files, isRunning, threadID });
+      if (!threadID) {
+        console.log('No threadID available');
+        return;
+      }
+
+      if (isRunning) {
+        messageQueue.current.push({ content, files });
+        return;
+      }
 
       setIsRunning(true);
+      const timeoutId = setTimeout(() => {
+        setIsRunning(false);
+      }, 5000); // Set state to complete after 5 seconds
 
       try {
-        const messageRes = await fetch(`/api/openai/add-message`, {
+        const messageRes = await fetch('/api/openai/add-message', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -38,8 +76,12 @@ const useAssistant = () => {
         });
 
         const message = await messageRes.json();
+        if (message.error) {
+          throw new Error(message.error);
+        }
 
-        // Optimistically update the local messages state before revalidation
+        console.log('Message response received', message);
+
         mutate(
           (currentMessages) => [
             ...(currentMessages ?? []),
@@ -48,77 +90,44 @@ const useAssistant = () => {
           false
         );
 
-        const run = await fetch(`/api/openai/run-assistant`, {
+        const run = await fetch('/api/openai/run-assistant', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({
-            threadID,
-          }),
+          body: JSON.stringify({ threadID }),
         });
 
         if (!run.ok) {
-          alert('Error running assistant'); // TODO improve error feedback
-          return;
+          const runRes = await run.json();
+          throw new Error(runRes.error || 'Error running assistant');
         }
 
         let runRes = await run.json();
+        console.log('Run response received', runRes);
 
-        // could be 'queued', 'in_progress', 'success', 'error', 'requires_action'
-        // if queued or in_progress, wait and revalidate
-        while (runRes.status === 'queued' || runRes.status === 'in_progress') {
-          // poll for run status
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-
-          const run = await fetch(`/api/openai/get-run?threadID=${threadID}&runID=${runRes.id}`);
-          runRes = await run.json();
-        }
+        runRes = await checkRunStatus(runRes.id);
 
         if (runRes.status === 'requires_action') {
-          // get the arguments from the tool calls
-          const toolCalls = runRes.required_action.submit_tool_outputs.tool_calls;
-          // update the map center
-          const updateMapToolCall = toolCalls.find((tc: any) => tc.function.name === 'update_map');
-          if (updateMapToolCall) {
-            const { longitude, latitude, zoom } = JSON.parse(updateMapToolCall.function.arguments);
-            setCenter({ longitude, latitude, zoom });
-          }
-
-          // add all the markers
-          const markerToolCalls = toolCalls.filter((tc: any) => tc.function.name === 'add_marker');
-          const markers = markerToolCalls.map((tc: any) => {
-            const { longitude, latitude, label } = JSON.parse(tc.function.arguments);
-            return { location: { lat: latitude, lng: longitude }, label };
-          });
-
-          addMarkers(markers);
-
-          await fetch('/api/openai/submit-tool-output', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              threadID,
-              runID: runRes.id,
-              toolOutputs: toolCalls.map((tc: any) => ({
-                output: 'true',
-                tool_call_id: tc.id,
-              })),
-            }),
+          console.log('Action required by run', runRes);
+          const addCarToolCalls = runRes.required_action.submit_tool_outputs.tool_calls.filter(
+            (tc: any) => tc.function.name === 'update_car'
+          );
+          addCarToolCalls.forEach((tc: any) => {
+            const carData = JSON.parse(tc.function.arguments);
+            console.log('Adding car from tool call', carData);
+            addCar(carData);
           });
         }
-
-        // Revalidate messages to fetch the latest after running the assistant
-        mutate();
       } catch (error) {
-        console.error('Error sending message and running assistant:', error);
+        console.error('Error in sendMessageAndRun', error);
       } finally {
+        clearTimeout(timeoutId);
         setIsRunning(false);
+        processMessageQueue();
       }
     },
-    [threadID, isRunning, mutate]
+    [threadID, isRunning, mutate, addCar]
   );
 
   return { messages, sendMessageAndRun, isRunning, resetThread };

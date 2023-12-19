@@ -11,7 +11,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
           <Group justify="space-between" style={{ flex: 1 }}>
             <Group wrap="nowrap" style={{ cursor: 'pointer' }}>
               <IconCompass size={32} />
-              <Title order={2}>Wanderlust</Title>
+              <Title order={2}>Velzck Land Rover Asssistant</Title>
             </Group>
             <Group ml="xl" gap="lg">
               <Link
