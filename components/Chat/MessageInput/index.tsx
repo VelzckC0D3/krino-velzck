@@ -84,13 +84,13 @@ export default function MessageInput({ isRunning, sendMessageAndRun, resetThread
           </Popover.Target>
           <Popover.Dropdown>
             <Stack align="center">
-              <Text size="md">Clear Conversation?</Text>
+              <Text size="md">¿Borrar Conversacion?</Text>
               <Group justify="space-between" w="100%">
                 <Button bg="gray" onClick={() => setConfirmOpen(false)}>
-                  Cancel
+                  Cancelar
                 </Button>
                 <Button variant="filled" bg="red" onClick={() => handleConfirmReset()}>
-                  Confirm
+                  Confirmar
                 </Button>
               </Group>
             </Stack>

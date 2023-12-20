@@ -1,5 +1,5 @@
 import { ActionIcon, AppShell, Group, Title } from '@mantine/core';
-import { IconBrandGithub, IconCompass } from '@tabler/icons-react';
+import { IconBrandGithub, IconCarSuv } from '@tabler/icons-react';
 import Link from 'next/link';
 
 export default function Shell({ children }: { children: React.ReactNode }) {
@@ -9,8 +9,8 @@ export default function Shell({ children }: { children: React.ReactNode }) {
         <Group h="100%" px="md">
           <Group justify="space-between" style={{ flex: 1 }}>
             <Group wrap="nowrap" style={{ cursor: 'pointer' }}>
-              <IconCompass size={32} />
-              <Title order={2}>Velzck Land Rover Assistant</Title>
+              <IconCarSuv size={32} stroke={1.3} />
+              <Title style={{ fontWeight: 'normal' }} order={2}>Velzck Land Rover Assistant</Title>
             </Group>
             <Group ml="xl" gap="lg">
               <Link

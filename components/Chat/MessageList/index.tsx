@@ -1,6 +1,6 @@
-import classes from './MessageList.module.css';
 import { useEffect, useRef } from 'react';
 import { Stack } from '@mantine/core';
+import classes from './MessageList.module.css';
 import { Message as MessageType } from '@/types/openai';
 import Message from './Message';
 

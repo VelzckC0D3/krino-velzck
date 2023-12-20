@@ -8,6 +8,27 @@
 
 .scrollable::-webkit-scrollbar-thumb {
   background-color: rgb(154, 154, 154);
-  outline: 1px solidrgb(191, 191, 191) rey;
+  outline: 1px solidrgb(191, 191, 191);
   border-radius: 2rem;
 }
+
+.messageBox {
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  padding-right: 4rem;
+}
+
+.roleBoxUser,
+.roleBoxAssistant {
+  height: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: -2rem;
+  font-size: 1.2rem;
+  padding: 0 5rem;
+}
+
