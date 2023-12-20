@@ -1,7 +1,7 @@
 import { SimpleGrid } from '@mantine/core';
 import useAssistant from '@/hooks/useAssistant';
 import Chat from '@/components/Chat';
-import Map from '@/components/Map';
+import Cars from '@/components/Cars';
 import { cssMainSize } from '@/theme';
 
 export default function HomePage() {
@@ -15,7 +15,7 @@ export default function HomePage() {
         isRunning={isRunning}
         resetThread={resetThread}
       />
-      <Map />
+      <Cars />
     </SimpleGrid>
   );
 }
