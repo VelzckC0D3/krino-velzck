@@ -98,4 +98,38 @@
     height: max-content;
     padding: 0 1rem;
   }
+
+  
+  .modalButton {
+    position: absolute;
+    z-index: 3;
+    bottom: 2rem;
+    left: 5.5rem;
+  }
+
+}
+
+.modalInfoCont {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+}
+
+.modalText {
+  text-align: center;
+}
+
+
+.modalImageCont {
+  background-color: rgb(255, 255, 255);
+  background: linear-gradient(357deg, rgb(0 0 0 / 24%) 0%, rgb(255 255 255 / 61%) 100%);
+  display: flex;
+  flex-wrap: wrap;
+
+  img {
+    width: 30rem;
+    height: 26rem;
+    object-fit: contain;
+  }
 }
