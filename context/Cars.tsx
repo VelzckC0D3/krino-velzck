@@ -2,50 +2,59 @@ import React, { createContext, useContext } from 'react';
 import { useLocalStorage } from '@mantine/hooks';
 
 // Define the structure of a car object.
+
 export type Car = {
-  id: string;
-  make: string;
   model: string;
+  images: string[];
+  description: string;
+  price: number;
+  year: number;
   color: string;
+  id: string;
 };
 
 // Define the context type.
 type CarsContextType = {
   displayCars: Car[];
   addCar: (car: Car) => void;
-  getCars: () => Car[];
+  replaceCars: (newCars: Car[]) => void;
 };
 
 // Initialize the context with default values.
 const CarsContext = createContext<CarsContextType>({
   displayCars: [],
   addCar: () => {},
-  getCars: () => [],
+  replaceCars: () => {},
 });
 
 export const CarsProvider = ({ children }: { children: React.ReactNode }) => {
-  // Use local storage to persist the cars array under 'displayCars'.
   const [displayCars, setDisplayCars] = useLocalStorage<Car[]>({
     key: 'displayCars',
     defaultValue: [],
   });
 
-  // Function to add a new car to the display list.
   const addCar = (newCar: Car) => {
-    setDisplayCars((prevCars) => [...prevCars, newCar]);
+    console.log('Adding car:', newCar); // Log the car being added
+    setDisplayCars((prevCars) => {
+      // Ensure prevCars is always an array
+      const updatedCars = Array.isArray(prevCars) ? [...prevCars, newCar] : [newCar];
+      console.log('Updated cars:', updatedCars); // Log the updated list of cars
+      return updatedCars;
+    });
   };
 
-  // Function to get the list of cars.
-  const getCars = () => displayCars;
+  const replaceCars = (newCars: Car[]) => {
+    console.log('Replacing cars with:', newCars); // Log the new list of cars
+    setDisplayCars(newCars);
+  };
 
   return (
-    <CarsContext.Provider value={{ displayCars, addCar, getCars }}>
+    <CarsContext.Provider value={{ displayCars, addCar, replaceCars }}>
       {children}
     </CarsContext.Provider>
   );
 };
 
-// Hook to use the CarsContext.
 export const useCars = () => {
   const context = useContext(CarsContext);
   if (!context) {

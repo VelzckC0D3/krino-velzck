@@ -1,4 +1,4 @@
-import React, { createContext, useContext, ReactNode } from 'react';
+/* import React, { createContext, useContext, ReactNode } from 'react';
 import { useLocalStorage } from '@mantine/hooks';
 
 export type MapCenter = {
@@ -65,3 +65,4 @@ export const useMap = () => {
 };
 
 export default MapContext;
+ */
