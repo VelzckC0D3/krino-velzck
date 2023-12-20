@@ -15,8 +15,19 @@
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  overflow-y: scroll;
+  overflow-y: auto;
   overflow-x: hidden;
+}
+
+.box::before {
+  content: '';
+  position: absolute;
+  width: 100dvw;
+  height: 100dvh;
+  top: 0;
+  left: 0;
+  z-index: -3;
+  background: linear-gradient(357deg, rgb(0 0 0 / 94%) 0%, rgba(255, 255, 255, 0.61) 100%);
 }
 
 .box * {
@@ -130,7 +141,10 @@
 .temporalBgCont {
   object-fit: contain;
   position: relative;
-  background: linear-gradient(357deg, rgb(0 0 0 / 24%) 0%, rgb(255, 255, 255) 30%);
+  font-family: 'Bruno Ace', serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .temporalBg {
@@ -155,5 +169,26 @@
 }
 
 .temporalTitle {
-  background-color: red;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  text-align: center;
+
+  * {
+    margin: 0;
+    padding: 0;
+  }
+
+  h2 {
+    font-size: 2rem;
+    -webkit-text-stroke: 1px;
+    color: ;
+  }
+
+  p {
+    font-size: 1.5rem;
+    font-weight: 500;
+  }
 }

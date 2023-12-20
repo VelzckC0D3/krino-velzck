@@ -18,7 +18,7 @@ const Chat = ({ sendMessageAndRun, messages, isRunning, resetThread }: Props) =>
   const conversationHeightPx = `calc(${sm ? cssHalfMainSize : cssMainSize} - 94px)`; // 94px = 64px (padding) + 30 (input height / 2)
 
   return (
-    <Stack style={sm ? { order: 2 } : {}}>
+    <Stack style={sm ? { order: 2 } : {backgroundColor: 'white', height: '100%', borderRadius: '15px'}}>
       <Box
         p="md"
         style={{ position: 'relative', borderRadius: '20px', height: conversationHeightPx }}

@@ -34,7 +34,7 @@ export default function MessageInput({ isRunning, sendMessageAndRun, resetThread
   }
 
   return (
-    <form onSubmit={form.onSubmit(handleSubmit)}>
+    <form onSubmit={form.onSubmit(handleSubmit)} >
       <Group
         m="md"
         justify="space-between"
