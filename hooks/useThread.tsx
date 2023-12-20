@@ -7,7 +7,7 @@ export function useThread() {
   const [threadID, setThreadID] = useLocalStorage({ key: 'threadID', defaultValue: null });
 
   const { data, error, isLoading } = useSWR(
-    threadID ? null : '/api/openai/create-thread',
+    threadID ? null : `/api/openai/create-thread`,
     fetcher,
     {
       shouldRetryOnError: false,

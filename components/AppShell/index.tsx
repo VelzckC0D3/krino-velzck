@@ -1,7 +1,6 @@
 import { ActionIcon, AppShell, Group, Title } from '@mantine/core';
 import { IconBrandGithub, IconCompass } from '@tabler/icons-react';
 import Link from 'next/link';
-import ColorSchemeToggle from '../ColorSchemeToggle/ColorSchemeToggle';
 
 export default function Shell({ children }: { children: React.ReactNode }) {
   return (
@@ -11,7 +10,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
           <Group justify="space-between" style={{ flex: 1 }}>
             <Group wrap="nowrap" style={{ cursor: 'pointer' }}>
               <IconCompass size={32} />
-              <Title order={2}>Wanderlust</Title>
+              <Title order={2}>Velzck Land Rover Assistant</Title>
             </Group>
             <Group ml="xl" gap="lg">
               <Link
@@ -23,7 +22,6 @@ export default function Shell({ children }: { children: React.ReactNode }) {
                   <IconBrandGithub />
                 </ActionIcon>
               </Link>
-              <ColorSchemeToggle />
             </Group>
           </Group>
         </Group>
